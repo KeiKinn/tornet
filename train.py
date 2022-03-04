@@ -3,9 +3,8 @@ import torch
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
-from mmcv import Config
-from models import build_model
 from models.model import SwT
+from models.cnn_trans import CRNN
 from train_cfg import TrainConfig
 from DataLoader.DCASE_PPL import DCASE_MFCC
 import time
@@ -99,7 +98,7 @@ def train(dl, optimizer, loss_fn, epoch, log_freq=10):
         batch = batch.to(device)
         label = label.to(device)
 
-        out = model(batch)
+        out, _ = model(batch)
         del batch
         optimizer.zero_grad()
         loss = loss_fn(out, label)
@@ -143,7 +142,7 @@ def eval(dl, loss_fn):
             batch = batch.to(device)
             label = label.to(device)
 
-            out = model(batch)
+            out, _ = model(batch)
         del batch
         loss = loss_fn(out, label)
         losses += loss.item()
@@ -161,7 +160,7 @@ def eval(dl, loss_fn):
 
 if __name__ == "__main__":
     machine, _ = get_path_prefix()
-    save_path = machine + '/nas/staff/data_work/Sure/1_Xin/Swin/models/'
+    save_path = machine + '/nas/staff/data_work/Sure/1_Xin/cnn_trans/models/'
     cfg_path = './configs/swin_base_patch4_window7_224.yaml'
     tr_cfg = TrainConfig()
     print_flags(tr_cfg)
@@ -169,9 +168,7 @@ if __name__ == "__main__":
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    # md_cfg = Config.fromfile(cfg_path)
-    # model = build_model(md_cfg)
-    model = SwT(cfg_path)
+    model = CRNN(conv_net='cnn', recurrent_net='transformer')
     model.to(device)
     print_nn(model)
     print('-' * 80)

@@ -96,7 +96,7 @@ class DCASE_PPL(Dataset):
 class DCASE_MFCC(DCASE_PPL):
     def __init__(self, seed_path, uni_sr, segment_len, spectrum_mode=False):
         super(DCASE_MFCC, self).__init__(seed_path, uni_sr, segment_len, spectrum_mode)
-        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, n_mels=224), AmplitudeToDB())
+        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, n_mels=40), AmplitudeToDB())
         self.mel_spec_delta = nn.Sequential(ComputeDeltas())
 
     def __getitem__(self, idx):

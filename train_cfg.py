@@ -25,10 +25,10 @@ def get_dcase_path(year):
 @dataclass
 class TrainConfig:
     machine, local = get_path_prefix()
-    sd = get_dcase_path('2021')
+    sd = get_dcase_path('2019')
     tr_sd: str = machine + sd[0]
     val_sd: str = machine + sd[1]
-    md_name: str = 'Swin_T'
+    md_name: str = 'cnn_trans'
     lr: float = 1e-5
     tr_bs: int = 2 if local else 64
     val_bs: int = 2 if local else 64

@@ -8,7 +8,7 @@ if 'rz.uni-augsburg.de' in uname()[1]:
 else:
     root = '/home/xinjing/Documents/gpu5/home/liushuo/'
 
-slurm_id = '8332_0'
+slurm_id = '8442_0'
 
 slurm = join(root, 'xin/swin_dev/slurm', slurm_id)
 
