@@ -3,12 +3,12 @@ from os import uname
 from os.path import join
 from moniter_tr import monitor_tr
 
-if 'rz.uni-augsburg.de' in uname()[1]:
-    root = '/User/jx/PycharmProject/gpu5'
+if 'eihw-gpu' in uname()[1]:
+    root = '/home/liushuo/'
 else:
     root = '/home/xinjing/Documents/gpu5/home/liushuo/'
 
-slurm_id = '8442_0'
+slurm_id = '8503_0'
 
 slurm = join(root, 'xin/swin_dev/slurm', slurm_id)
 

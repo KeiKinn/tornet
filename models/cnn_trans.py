@@ -1,6 +1,29 @@
 import torch
 import torch.nn as nn
 import math
+import torchvision
+
+
+class ResNet(torchvision.models.resnet.ResNet):
+    def __init__(self, *args, **kwargs):
+        super(ResNet, self).__init__(*args, **kwargs)
+        self.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3,
+                               bias=False)
+        self.fc = nn.Linear(512, 256)
+
+
+class ResNet12(nn.Module):
+    def __init__(self):
+        super(ResNet12, self).__init__()
+        self.backbone = ResNet(torchvision.models.resnet.BasicBlock, [2, 2, 1, 1], zero_init_residual=True)
+        self.do = nn.Dropout(p=0.5)
+        self.fc1 = nn.Linear(256, 10)
+
+    def forward(self, x):
+        x = self.backbone(x)
+        x = self.do(x)
+        x = self.fc1(x)
+        return x, x
 
 
 class ProcessLLD(nn.Module):
@@ -110,7 +133,9 @@ class DistributedCNN(nn.Module):
         self.bn1 = nn.BatchNorm2d(32)
         self.act1 = nn.ReLU()
         self.max_p1 = nn.MaxPool2d((2, 2))
-        self.conv1, self.conv11, self.bn1, self.act1, self.max_p1 = [TimeDistributed(m) for m in [self.conv1, self.conv11, self.bn1, self.act1, self.max_p1]]
+        self.conv1, self.conv11, self.bn1, self.act1, self.max_p1 = [TimeDistributed(m) for m in
+                                                                     [self.conv1, self.conv11, self.bn1, self.act1,
+                                                                      self.max_p1]]
         self.cnn1 = nn.Sequential(self.conv1, self.conv11, self.bn1, self.act1, self.max_p1)
 
         self.conv2 = nn.Conv2d(32, 64, (3, 3), padding=1)
@@ -118,7 +143,9 @@ class DistributedCNN(nn.Module):
         self.bn2 = nn.BatchNorm2d(64)
         self.act2 = nn.ReLU()
         self.max_p2 = nn.MaxPool2d((2, 1))
-        self.conv2, self.conv22, self.bn2, self.act2, self.max_p2 = [TimeDistributed(m) for m in [self.conv2, self.conv22, self.bn2, self.act2, self.max_p2]]
+        self.conv2, self.conv22, self.bn2, self.act2, self.max_p2 = [TimeDistributed(m) for m in
+                                                                     [self.conv2, self.conv22, self.bn2, self.act2,
+                                                                      self.max_p2]]
         self.cnn2 = nn.Sequential(self.conv2, self.conv22, self.bn2, self.act2, self.max_p2)
 
         self.conv3 = nn.Conv2d(64, 128, (3, 3), padding=1)
@@ -126,7 +153,9 @@ class DistributedCNN(nn.Module):
         self.bn3 = nn.BatchNorm2d(128)
         self.act3 = nn.ReLU()
         self.max_p3 = nn.MaxPool2d((2, 1))
-        self.conv3, self.conv33, self.bn3, self.act3, self.max_p3 = [TimeDistributed(m) for m in [self.conv3, self.conv33, self.bn3, self.act3, self.max_p3]]
+        self.conv3, self.conv33, self.bn3, self.act3, self.max_p3 = [TimeDistributed(m) for m in
+                                                                     [self.conv3, self.conv33, self.bn3, self.act3,
+                                                                      self.max_p3]]
         self.cnn3 = nn.Sequential(self.conv3, self.conv33, self.bn3, self.act3, self.max_p3)
 
         self.conv4 = nn.Conv2d(128, 256, (3, 3), padding=1)
@@ -134,7 +163,8 @@ class DistributedCNN(nn.Module):
         self.bn4 = nn.BatchNorm2d(256)
         self.act4 = nn.ReLU()
         self.max_p4 = nn.MaxPool2d((2, 1))
-        self.conv4, self.conv44, self.bn4, self.act4 = [TimeDistributed(m) for m in [self.conv4, self.conv44, self.bn4, self.act4]]
+        self.conv4, self.conv44, self.bn4, self.act4 = [TimeDistributed(m) for m in
+                                                        [self.conv4, self.conv44, self.bn4, self.act4]]
         self.cnn4 = nn.Sequential(self.conv4, self.conv44, self.bn4, self.act4)
 
         self.conv5 = nn.Conv2d(256, 512, (3, 3), padding=1)
@@ -142,14 +172,16 @@ class DistributedCNN(nn.Module):
         self.bn5 = nn.BatchNorm2d(512)
         self.act5 = nn.ReLU()
         self.max_p5 = nn.MaxPool2d((2, 1))
-        self.conv5, self.conv55, self.bn5, self.act5 = [TimeDistributed(m) for m in [self.conv5, self.conv55, self.bn5, self.act5]]
+        self.conv5, self.conv55, self.bn5, self.act5 = [TimeDistributed(m) for m in
+                                                        [self.conv5, self.conv55, self.bn5, self.act5]]
         self.cnn5 = nn.Sequential(self.conv5, self.conv55, self.bn5, self.act5)
 
         self.skip13 = nn.Conv2d(32, 128, (1, 1))
         self.bn13 = nn.BatchNorm2d(128)
         self.act13 = nn.ReLU()
         self.max_p13 = nn.MaxPool2d((4, 1))
-        self.skip13, self.bn13, self.act13, self.max_p13 = [TimeDistributed(m) for m in [self.skip13, self.bn13, self.act13, self.max_p13]]
+        self.skip13, self.bn13, self.act13, self.max_p13 = [TimeDistributed(m) for m in
+                                                            [self.skip13, self.bn13, self.act13, self.max_p13]]
         self.skip1 = nn.Sequential(self.skip13, self.bn13, self.act13, self.max_p13)
 
         self.skip35 = nn.Conv2d(128, 512, (1, 1))
@@ -193,7 +225,8 @@ class PositionalEncoder(nn.Module):
 class Transformer(nn.Module):
     def __init__(self):
         super(Transformer, self).__init__()
-        transformer_layer = nn.TransformerEncoderLayer(d_model=2560, nhead=4, dim_feedforward=128, dropout=0.5, activation='relu')
+        transformer_layer = nn.TransformerEncoderLayer(d_model=2560, nhead=4, dim_feedforward=128, dropout=0.5,
+                                                       activation='relu')
         self.transformer_encoder = nn.TransformerEncoder(transformer_layer, num_layers=2)
         self.pe = PositionalEncoder(max_len=321, d_model=2560)
         self.out_dense = nn.Linear(2560, 128)
@@ -281,10 +314,10 @@ class CRNN(nn.Module):
 
         self.fc1 = nn.Linear(128, 64)  # 128 + 32, 64
         self.act = nn.ReLU()
-        self.do = nn.Dropout(0.5)   # 0.5
+        self.do = nn.Dropout(0.5)  # 0.5
         self.fc2 = nn.Linear(64, 10)
 
-    def forward(self, x):   # lld
+    def forward(self, x):  # lld
         # processing spectrum
         out = self.cnn(x)
         if self.conv_net == 'td-cnn':
@@ -311,7 +344,6 @@ class CRNN(nn.Module):
             out = torch.mean(out, dim=1)
             out = self.linear(out)
 
-
         out = self.act(self.fc1(out))
         features = out
         out = self.fc2(self.do(out))
@@ -326,4 +358,3 @@ if __name__ == '__main__':
 
     print(features_.shape)
     print(output.shape)
-

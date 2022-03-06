@@ -3,8 +3,10 @@ import torch
 from torch.utils.data import DataLoader
 from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
-from models.model import SwT
-from models.cnn_trans import CRNN
+
+from models import cnn_trans
+from models.model import SwT, ResSwin
+from models.cnn_trans import CRNN, ResNet12
 from train_cfg import TrainConfig
 from DataLoader.DCASE_PPL import DCASE_MFCC
 import time
@@ -55,8 +57,8 @@ def report_metrics(pred_aggregate_, gold_aggregate_):
 
 
 def create_ds(cfg):
-    ds_tr = DCASE_MFCC(cfg.tr_sd, 16000, 115200)
-    ds_ev = DCASE_MFCC(cfg.val_sd, 16000, 115200)
+    ds_tr = DCASE_MFCC(cfg.tr_sd, 16000, 16000 * 10)
+    ds_ev = DCASE_MFCC(cfg.val_sd, 16000, 16000 * 10)
     return ds_tr, ds_ev
 
 
@@ -93,7 +95,7 @@ def train(dl, optimizer, loss_fn, epoch, log_freq=10):
     total = 0
     tmp_correct = 0
     tmp_total = 0
-
+    model.train()
     for idx, (batch, label) in enumerate(dl):
         batch = batch.to(device)
         label = label.to(device)
@@ -155,7 +157,7 @@ def eval(dl, loss_fn):
 
     print('==> Val loss: {:.4f}, Acc: {:.5}'.format(losses / counter, correct / total))
     report_metrics(pred_aggregate, gold_aggregate)
-    print('-' * 80)
+    print('-' * 64)
 
 
 if __name__ == "__main__":
@@ -168,10 +170,11 @@ if __name__ == "__main__":
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    model = CRNN(conv_net='cnn', recurrent_net='transformer')
+    model = ResSwin(cfg_path)
+    # model = CRNN('cnn', 'transformer')
     model.to(device)
     print_nn(model)
-    print('-' * 80)
+    print('-' * 64)
 
     tr_dl, val_dl = create_dl(tr_cfg)
     optimizer, loss_fn = training_setting(model, tr_cfg.lr)

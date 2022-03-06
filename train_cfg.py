@@ -17,7 +17,7 @@ def get_dcase_path(year):
         '2021': ['/nas/staff/data_work/Sure/DCASE2021/processed_data/seeds/train.pkl',
                  '/nas/staff/data_work/Sure/DCASE2021/processed_data/seeds/test.pkl'],
         '2019': ['/nas/staff/data_work/Sure/DCASE2019/train_label.pkl',
-                 '/nas/staff/data_work/Sure/DCASE2019/test_label.pkl'],
+                 '/nas/staff/data_work/Sure/DCASE2019/eval_label.pkl'],
     }
     return path[year]
 
@@ -25,7 +25,7 @@ def get_dcase_path(year):
 @dataclass
 class TrainConfig:
     machine, local = get_path_prefix()
-    sd = get_dcase_path('2019')
+    sd = get_dcase_path('2021')
     tr_sd: str = machine + sd[0]
     val_sd: str = machine + sd[1]
     md_name: str = 'cnn_trans'
@@ -36,7 +36,7 @@ class TrainConfig:
     va_sm: int = 20 if local else 20000
     save_every: int = 10000 if local else 2000
     val_every: int = 1
-    epoches: int = 100
+    epoches: int = 10000
     log_freq: int = 20
 
     def asdic(self):

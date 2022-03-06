@@ -96,7 +96,7 @@ class DCASE_PPL(Dataset):
 class DCASE_MFCC(DCASE_PPL):
     def __init__(self, seed_path, uni_sr, segment_len, spectrum_mode=False):
         super(DCASE_MFCC, self).__init__(seed_path, uni_sr, segment_len, spectrum_mode)
-        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, n_mels=40), AmplitudeToDB())
+        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, hop_length=256, n_mels=128), AmplitudeToDB())
         self.mel_spec_delta = nn.Sequential(ComputeDeltas())
 
     def __getitem__(self, idx):
@@ -110,7 +110,8 @@ class DCASE_MFCC(DCASE_PPL):
         return tgt_segment, label
 
     def compute_output(self, data):
-        data = self.mel_spec_extractor(data)[:, :, :224]
+        # mel = torch.zeros(1, 128, 512)
+        data = self.mel_spec_extractor(data)[:, :, :512]
         # data_delta = self.mel_spec_delta(data)
         # data_delta2 = self.mel_spec_delta(data_delta)
         # data = torch.cat([data, data_delta, data_delta2], dim=0)
