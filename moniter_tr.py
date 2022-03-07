@@ -50,3 +50,22 @@ def monitor_tr(slurm):
     plt.title('acc')
     plt.legend(['tr_acc', 'va_acc'])
     plt.show()
+
+
+def monitor_uar(slurm):
+    uars = []
+
+    with open(slurm) as slurm_file:
+        lines = slurm_file.readlines()
+        for line in lines:
+            if line.startswith('#=>'):
+                elements = line.split(' ')
+                if elements[1] == 'Val':
+                    uar = float(elements[3].replace('\n', ''))
+                    uars.append(uar)
+
+    print('max uar:', max(uars))
+    plt.figure()
+    plt.plot(uars)
+    plt.title('uar')
+    plt.show()

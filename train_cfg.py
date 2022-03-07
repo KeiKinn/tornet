@@ -30,8 +30,8 @@ class TrainConfig:
     val_sd: str = machine + sd[1]
     md_name: str = 'cnn_trans'
     lr: float = 1e-5
-    tr_bs: int = 2 if local else 64
-    val_bs: int = 2 if local else 64
+    tr_bs: int = 2 if local else 16
+    val_bs: int = 2 if local else 16
     tr_sm: int = 20 if local else 20000
     va_sm: int = 20 if local else 20000
     save_every: int = 10000 if local else 2000

@@ -32,25 +32,24 @@ def conv_block(in_f, out_f, activation='relu', *args, **kwargs):
 
 def res_encoder(in_c):
     encoder = nn.Sequential(
-        conv_block(in_c, 32, kernel_size=3, padding=1, stride=1),
+        conv_block(in_c, 16, kernel_size=7, padding=3, stride=1),
 
         # ResNetBlock(16, 16),
 
-        ResNetBlock(32, 32),
-        nn.MaxPool2d(kernel_size=1),
-        # nn.Dropout(p=0.25),
+        # ResNetBlock(16, 16),
+        # nn.MaxPool2d(kernel_size=1),
+        # # nn.Dropout(p=0.25),
+
+        ResNetBlock(16, 32),
+        nn.MaxPool2d(kernel_size=[1, 2]),
+        nn.Dropout(p=0.3),
+
+        # ResNetBlock(32, 32),
+        # nn.MaxPool2d(kernel_size=1),
 
         ResNetBlock(32, 64),
         nn.MaxPool2d(kernel_size=[1, 2]),
-        # nn.Dropout(p=0.3),
-
-        ResNetBlock(64, 64),
-        nn.MaxPool2d(kernel_size=1),
-
-        ResNetBlock(64, 128),
-        nn.MaxPool2d(kernel_size=[1, 2]),
         nn.Dropout(p=0.5),
-
     )
     return encoder
 

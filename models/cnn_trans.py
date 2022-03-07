@@ -315,7 +315,7 @@ class CRNN(nn.Module):
         self.fc1 = nn.Linear(128, 64)  # 128 + 32, 64
         self.act = nn.ReLU()
         self.do = nn.Dropout(0.5)  # 0.5
-        self.fc2 = nn.Linear(64, 10)
+        self.fc2 = nn.Linear(64, 2)
 
     def forward(self, x):  # lld
         # processing spectrum
