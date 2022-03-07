@@ -1,6 +1,7 @@
 import torch.nn as nn
 from mmcv import Config
 from models import build_model
+from models.BCRes import BCResNet
 
 
 class SwT(nn.Module):
@@ -117,15 +118,32 @@ class ResSwin(nn.Module):
         return x, 0
 
 
+class BCRes(nn.Module):
+    def __init__(self, n_classes):
+        super(BCRes, self).__init__()
+        self.bcres = BCResNet()
+        self.decoder = baseline_decoder(n_classes, 12, 10)
+
+    def forward(self, x):
+        x = self.bcres(x)
+        x = x.view(x.size(0), -1)
+        x = self.decoder(x)
+        return x, 0
+
 if __name__ == '__main__':
     import torch
 
-    model = Resnet(1, 10)
-    dummy = torch.zeros(4, 1, 128, 128 * 4)
-
-    cfg_path = '../configs/swin_base_patch4_window7_224.yaml'
-    model = ResSwin(cfg_path)
-    out, _ = model(dummy)
-
+    # model = Resnet(1, 10)
+    # dummy = torch.zeros(4, 1, 128, 128 * 4)
+    #
+    # cfg_path = '../configs/swin_base_patch4_window7_224.yaml'
+    # model = ResSwin(cfg_path)
+    # out, _ = model(dummy)
+    #
+    # print(model(dummy).shape)
+    # print(model)
+    #
+    model = BCRes(10)
+    dummy = torch.zeros(4, 1, 40, 128 * 4)
+    out = model(dummy)
     print(model(dummy).shape)
-    print(model)

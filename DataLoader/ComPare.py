@@ -37,7 +37,7 @@ class Compare(data.Dataset):
         self.path = machine + get_data_path(dataset)
         self.rows = self.get_data()
 
-        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, hop_length=256, n_mels=128),
+        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, hop_length=256, n_mels=40),
                                                 AmplitudeToDB())
         self.label_dict = {
             'negative': 0,

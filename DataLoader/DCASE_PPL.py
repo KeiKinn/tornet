@@ -48,7 +48,7 @@ class DCASE_PPL(Dataset):
         }
 
         self.spectrum_mode = spectrum_mode
-        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=640, n_mels=128), AmplitudeToDB())
+        self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=640, n_mels=40), AmplitudeToDB())
         self.labels = {}
         for label in self.label2num:
             self.labels[label] = [idx for idx, (_, _, lbl) in enumerate(self.seeds) if lbl == label]

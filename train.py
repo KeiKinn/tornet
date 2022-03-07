@@ -5,7 +5,7 @@ from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
 
 from models import cnn_trans
-from models.model import SwT, ResSwin
+from models.model import SwT, ResSwin, BCRes
 from models.cnn_trans import CRNN, ResNet12
 from train_cfg import TrainConfig
 from DataLoader.ComPare import Compare
@@ -173,8 +173,9 @@ if __name__ == "__main__":
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    model = ResSwin(cfg_path)
+    # model = ResSwin(cfg_path)
     # model = CRNN('cnn', 'transformer')
+    model = BCRes(2)
     model.to(device)
     print_nn(model)
     print('-' * 64)
