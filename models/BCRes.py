@@ -76,6 +76,7 @@ class TransitionBlock(nn.Module):
             self,
             inplanes: int,
             planes: int,
+            S=5,
             dilation=1,
             stride=1,
             temp_pad=(0, 1),
@@ -85,7 +86,7 @@ class TransitionBlock(nn.Module):
         self.freq_dw_conv = nn.Conv2d(planes, planes, kernel_size=(3, 1), padding=(1, 0), groups=planes,
                                       stride=stride,
                                       dilation=dilation, bias=False)
-        self.ssn = SubSpectralNorm(planes, 5)
+        self.ssn = SubSpectralNorm(planes, S)
         self.temp_dw_conv = nn.Conv2d(planes, planes, kernel_size=(1, 3), padding=temp_pad, groups=planes,
                                       dilation=dilation, stride=stride, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)

@@ -1,16 +1,19 @@
 import os
 import torch
 from torch.utils.data import DataLoader
-from torch.optim import Adam
+from torch.optim import Adam, AdamW
 from torch.nn import CrossEntropyLoss
 
 from models import cnn_trans
 from models.model import SwT, ResSwin, BCRes
 from models.cnn_trans import CRNN, ResNet12
+from models.CRNN_VAR import CRNN_v2, Dual_CRNN
+from models.CRNN_mini import CRNN_mini
 from train_cfg import TrainConfig
 from DataLoader.ComPare import Compare
 import time
 import numpy as np
+import random
 from sklearn.metrics import classification_report, confusion_matrix, recall_score, roc_auc_score
 
 
@@ -22,6 +25,14 @@ def get_path_prefix():
         prefix = '/home/xinjing/Documents/gpu5'
         local = True
     return prefix, local
+
+
+def setup_seed(seed):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    np.random.seed(seed)
+    random.seed(seed)
+    torch.backends.cudnn.deterministic = True
 
 
 def save_model(save_path, current_model, current_epoch, marker, timestamp):
@@ -164,7 +175,9 @@ def eval(dl, loss_fn):
 
 
 if __name__ == "__main__":
-    machine, _ = get_path_prefix()
+    machine, local = get_path_prefix()
+    if not local:
+        setup_seed(10)
     save_path = machine + '/nas/staff/data_work/Sure/1_Xin/cnn_trans/models/'
     cfg_path = './configs/swin_base_patch4_window7_224.yaml'
     tr_cfg = TrainConfig()
@@ -174,8 +187,9 @@ if __name__ == "__main__":
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     # model = ResSwin(cfg_path)
-    # model = CRNN('cnn', 'transformer')
-    model = BCRes(2)
+    model = CRNN_v2('cnn', '')
+    # model = Dual_CRNN('cnn', '')
+    # model = BCRes(2)
     model.to(device)
     print_nn(model)
     print('-' * 64)

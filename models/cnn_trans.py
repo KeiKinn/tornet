@@ -47,7 +47,7 @@ class ProcessLLD(nn.Module):
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
-        self.conv1 = nn.Conv2d(1, 32, (3, 3), padding=1)
+        self.conv1 = nn.Conv2d(3, 32, (3, 3), padding=1)
         self.conv11 = nn.Conv2d(32, 32, (3, 3), padding=1)
         self.bn1 = nn.BatchNorm2d(32)
         self.act1 = nn.ReLU()
@@ -227,7 +227,7 @@ class Transformer(nn.Module):
         super(Transformer, self).__init__()
         transformer_layer = nn.TransformerEncoderLayer(d_model=2560, nhead=4, dim_feedforward=128, dropout=0.5,
                                                        activation='relu')
-        self.transformer_encoder = nn.TransformerEncoder(transformer_layer, num_layers=2)
+        self.transformer_encoder = nn.TransformerEncoder(transformer_layer, num_layers=1)
         self.pe = PositionalEncoder(max_len=321, d_model=2560)
         self.out_dense = nn.Linear(2560, 128)
 

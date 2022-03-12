@@ -64,7 +64,7 @@ def monitor_uar(slurm):
                     uar = float(elements[3].replace('\n', ''))
                     uars.append(uar)
 
-    print('max uar:', max(uars))
+    print('max uar:', max(uars), uars.index(max(uars)))
     plt.figure()
     plt.plot(uars)
     plt.title('uar')

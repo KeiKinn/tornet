@@ -2,10 +2,11 @@ import os
 import torch
 import torch.nn as nn
 import torchaudio
-from torchaudio.transforms import MelSpectrogram, AmplitudeToDB, Resample
+from torchaudio.transforms import MelSpectrogram, AmplitudeToDB, Resample, ComputeDeltas
 import csv
 import torch.utils.data as data
 import random
+from utils.spec import *
 
 
 def get_path_prefix():
@@ -39,6 +40,9 @@ class Compare(data.Dataset):
 
         self.mel_spec_extractor = nn.Sequential(MelSpectrogram(uni_sr, n_fft=1024, hop_length=256, n_mels=40),
                                                 AmplitudeToDB())
+        self.mel_spec_delta = nn.Sequential(ComputeDeltas())
+        self.mask = SpecAugmentation(time_drop_width=16, time_stripes_num=2,
+                                     freq_drop_width=8, freq_stripes_num=2)
         self.label_dict = {
             'negative': 0,
             'positive': 1
@@ -52,6 +56,7 @@ class Compare(data.Dataset):
         wav_data = self.unify_data(wav_data, sr, self.uni_sr)
         tgt_segment = self.truncate_segments(wav_data)
         tgt_segment = self.compute_output(tgt_segment)
+        # tgt_segment = self.mask(tgt_segment)
         return tgt_segment, label
 
     def __len__(self):
@@ -91,6 +96,9 @@ class Compare(data.Dataset):
 
     def compute_output(self, data):
         data = self.mel_spec_extractor(data)[:, :, :512]
+        data_delta = self.mel_spec_delta(data)
+        data_delta2 = self.mel_spec_delta(data_delta)
+        data = torch.cat([data, data_delta, data_delta2], dim=0)
         return data
 
 
