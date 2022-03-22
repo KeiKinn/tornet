@@ -187,6 +187,7 @@ if __name__ == "__main__":
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     # model = ResSwin(cfg_path)
+    # model = CRNN('cnn', 'lstm_attn')
     model = CRNN_v2('cnn', '')
     # model = Dual_CRNN('cnn', '')
     # model = BCRes(2)

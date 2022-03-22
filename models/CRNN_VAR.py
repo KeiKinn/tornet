@@ -39,48 +39,47 @@ class CNN(nn.Module):
         self.bc1 = BroadcastedBlock(64)
 
         # self.conv2 = nn.Conv2d(32, 64, (3, 3), padding=1)
-        self.conv22 = nn.Conv2d(64, 64, (3, 3), padding=1)
-        self.bn2 = nn.BatchNorm2d(64)
-        self.act2 = nn.ReLU()
-        # self.max_p2 = nn.MaxPool2d((2, 1))
-        self.dropout2 = nn.Dropout(0.1)
-        self.cnn2 = nn.Sequential(self.conv22, self.bn2, self.act2)
+        # self.conv22 = nn.Conv2d(64, 64, (3, 3), padding=1)
+        # self.bn2 = nn.BatchNorm2d(64)
+        # self.act2 = nn.ReLU()
+        # # self.max_p2 = nn.MaxPool2d((2, 1))
+        # self.dropout2 = nn.Dropout(0.1)
+        # self.cnn2 = nn.Sequential(self.conv22, self.bn2, self.act2)
 
         self.trans2 = TransitionBlock(64, 128, stride=(2, 1))
-
         self.bc2 = BroadcastedBlock(128)
 
         # self.conv3 = nn.Conv2d(64, 128, (3, 3), padding=1)
-        self.conv33 = nn.Conv2d(128, 128, (3, 3), padding=1)
-        self.bn3 = nn.BatchNorm2d(128)
-        self.act3 = nn.ReLU()
-        # self.max_p3 = nn.MaxPool2d((2, 1))
-        self.dropout3 = nn.Dropout(0.1)
-        self.cnn3 = nn.Sequential(self.conv33, self.bn3, self.act3)
-        self.innorm3 = nn.InstanceNorm2d(128)
+        # self.conv33 = nn.Conv2d(128, 128, (3, 3), padding=1)
+        # self.bn3 = nn.BatchNorm2d(128)
+        # self.act3 = nn.ReLU()
+        # # self.max_p3 = nn.MaxPool2d((2, 1))
+        # self.dropout3 = nn.Dropout(0.1)
+        # self.cnn3 = nn.Sequential(self.conv33, self.bn3, self.act3)
+        # self.innorm3 = nn.InstanceNorm2d(128)
 
         self.trans3 = TransitionBlock(128, 256)
         self.bc3 = BroadcastedBlock(256)
 
         # self.conv4 = nn.Conv2d(128, 256, (3, 3), padding=1)
-        self.conv44 = nn.Conv2d(256, 256, (3, 3), padding=1)
-        self.bn4 = nn.BatchNorm2d(256)
-        self.act4 = nn.ReLU()
-        self.max_p4 = nn.MaxPool2d((2, 1))
-        self.dropout4 = nn.Dropout(0.1)
-        self.cnn4 = nn.Sequential(self.conv44, self.bn4, self.act4)
-        self.innorm4 = nn.InstanceNorm2d(256)
+        # self.conv44 = nn.Conv2d(256, 256, (3, 3), padding=1)
+        # self.bn4 = nn.BatchNorm2d(256)
+        # self.act4 = nn.ReLU()
+        # self.max_p4 = nn.MaxPool2d((2, 1))
+        # self.dropout4 = nn.Dropout(0.1)
+        # self.cnn4 = nn.Sequential(self.conv44, self.bn4, self.act4)
+        # self.innorm4 = nn.InstanceNorm2d(256)
 
         self.trans4 = TransitionBlock(256, 512, stride=(1, 1))
         self.bc4 = BroadcastedBlock(512)
 
         # self.conv5 = nn.Conv2d(256, 512, (3, 3), padding=1)
-        self.conv55 = nn.Conv2d(512, 512, (3, 3), padding=1)
-        self.bn5 = nn.BatchNorm2d(512)
-        self.act5 = nn.ReLU()
-        self.max_p5 = nn.MaxPool2d((2, 1))
-        self.dropout5 = nn.Dropout(0.1)
-        self.cnn5 = nn.Sequential(self.conv55, self.bn5, self.act5)
+        # self.conv55 = nn.Conv2d(512, 512, (3, 3), padding=1)
+        # self.bn5 = nn.BatchNorm2d(512)
+        # self.act5 = nn.ReLU()
+        # self.max_p5 = nn.MaxPool2d((2, 1))
+        # self.dropout5 = nn.Dropout(0.1)
+        # self.cnn5 = nn.Sequential(self.conv55, self.bn5, self.act5)
 
         self.skip13 = nn.Conv2d(32, 128, (1, 1))
         self.bn13 = nn.BatchNorm2d(128)
@@ -107,25 +106,25 @@ class CNN(nn.Module):
         out = self.trans1(out)
         out = self.bc1(out)
 
-        out = self.cnn2(out)
+        # out = self.cnn2(out)
         out = self.trans2(out)
         out = self.bc2(out)
-        out = self.cnn3(out)
+        # out = self.cnn3(out)
 
         out = out + skip1
-        out = self.innorm3(out) + self.lam * out
+        # out = self.innorm3(out) + self.lam * out
 
         # skip2 = self.se5(out)
         skip2 = self.skip2(out)
 
         out = self.trans3(out)
         out = self.bc3(out)
-        out = self.cnn4(out)
+        # out = self.cnn4(out)
         out = self.trans4(out)
         out = self.bc4(out)
-        out = self.cnn5(out)
+        # out = self.cnn5(out)
         out = out + skip2
-        out = self.innorm4(out) + self.lam * out
+        # out = self.innorm4(out) + self.lam * out
 
         return out
 
@@ -290,8 +289,9 @@ class Dual_CRNN(nn.Module):
 
 
 if __name__ == '__main__':
-    x = torch.ones(5, 3, 80, 224)
+    x = torch.ones(1, 3, 40, 224)
     model = CRNN_v2('cnn', '')
     # model = Dual_CRNN('cnn', '')
     out, features = model(x)
+    print(model)
     print('num parameters:', sum(p.numel() for p in model.parameters() if p.requires_grad))

@@ -8,7 +8,7 @@ class SubSpectralNorm(nn.Module):
         super(SubSpectralNorm, self).__init__()
         self.S = S
         self.eps = eps
-        self.bn = nn.BatchNorm2d(C*S)
+        self.bn = nn.BatchNorm2d(C * S)
 
     def forward(self, x):
         # x: input features with shape {N, C, F, T}
@@ -25,6 +25,7 @@ class BroadcastedBlock(nn.Module):
     def __init__(
             self,
             planes: int,
+            S=5,
             dilation=1,
             stride=1,
             temp_pad=(0, 1),
@@ -34,7 +35,7 @@ class BroadcastedBlock(nn.Module):
         self.freq_dw_conv = nn.Conv2d(planes, planes, kernel_size=(3, 1), padding=(1, 0), groups=planes,
                                       dilation=dilation,
                                       stride=stride, bias=False)
-        self.ssn1 = SubSpectralNorm(planes, 5)
+        self.ssn1 = SubSpectralNorm(planes, S)
         self.temp_dw_conv = nn.Conv2d(planes, planes, kernel_size=(1, 3), padding=temp_pad, groups=planes,
                                       dilation=dilation, stride=stride, bias=False)
         self.bn = nn.BatchNorm2d(planes)
@@ -149,7 +150,6 @@ class BCResNet(torch.nn.Module):
         self.conv4 = nn.Conv2d(32, 12, 1, bias=False)
 
     def forward(self, x):
-
         # print('INPUT SHAPE:', x.shape)
         out = self.conv1(x)
 
@@ -186,8 +186,8 @@ class BCResNet(torch.nn.Module):
         # print('OUTPUT SHAPE:', out.shape)
         return out
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     x = torch.ones(5, 1, 40, 224)
     bcresnet = BCResNet()
     _ = bcresnet(x)

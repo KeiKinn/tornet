@@ -8,7 +8,7 @@ if 'eihw-gpu' in uname()[1]:
 else:
     root = '/home/xinjing/Documents/gpu5/home/liushuo/'
 
-slurm_id = '8910_0'
+slurm_id = '9389_0'
 
 slurm = join(root, 'xin/swin_dev/slurm', slurm_id)
 
