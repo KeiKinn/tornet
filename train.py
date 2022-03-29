@@ -179,7 +179,6 @@ if __name__ == "__main__":
     if not local:
         setup_seed(10)
     save_path = machine + '/nas/staff/data_work/Sure/1_Xin/cnn_trans/models/'
-    cfg_path = './configs/swin_base_patch4_window7_224.yaml'
     tr_cfg = TrainConfig()
     print_flags(tr_cfg)
     timestamp = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())
