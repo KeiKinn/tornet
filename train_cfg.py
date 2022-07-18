@@ -14,10 +14,10 @@ def get_path_prefix():
 
 def get_dcase_path(year):
     path = {
-        '2021': ['/nas/staff/data_work/Sure/DCASE2021/processed_data/seeds/train.pkl',
-                 '/nas/staff/data_work/Sure/DCASE2021/processed_data/seeds/test.pkl'],
-        '2019': ['/nas/staff/data_work/Sure/DCASE2019/train_label.pkl',
-                 '/nas/staff/data_work/Sure/DCASE2019/eval_label.pkl'],
+        '2021': ['./seeds/train.pkl',
+                 './seeds/test.pkl'],
+        '2019': ['./DCASE2019/train_label.pkl',
+                 './DCASE2019/eval_label.pkl'],
     }
     return path[year]
 
@@ -28,7 +28,7 @@ class TrainConfig:
     sd = get_dcase_path('2021')
     tr_sd: str = machine + sd[0]
     val_sd: str = machine + sd[1]
-    md_name: str = 'cnn_trans'
+    md_name: str = 'tornet'
     lr: float = 1e-5
     tr_bs: int = 2 if local else 16
     val_bs: int = 2 if local else 16

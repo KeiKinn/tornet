@@ -1,20 +1,15 @@
 import os
 import torch
 from torch.utils.data import DataLoader
-from torch.optim import Adam, AdamW
+from torch.optim import Adam
 from torch.nn import CrossEntropyLoss
-
-from models import cnn_trans
-from models.model import SwT, ResSwin, BCRes
-from models.cnn_trans import CRNN, ResNet12
-from models.CRNN_VAR import CRNN_v2, Dual_CRNN
-from models.CRNN_mini import CRNN_mini
+from models.TorNet import TorNet
 from train_cfg import TrainConfig
 from DataLoader.ComPare import Compare
 import time
 import numpy as np
 import random
-from sklearn.metrics import classification_report, confusion_matrix, recall_score, roc_auc_score
+from sklearn.metrics import classification_report, confusion_matrix, recall_score
 
 
 def get_path_prefix():
@@ -178,18 +173,14 @@ if __name__ == "__main__":
     machine, local = get_path_prefix()
     if not local:
         setup_seed(10)
-    save_path = machine + '/nas/staff/data_work/Sure/1_Xin/cnn_trans/models/'
+    save_path = machine + '[YOUR PATH]'
     tr_cfg = TrainConfig()
     print_flags(tr_cfg)
     timestamp = time.strftime('%Y-%m-%d-%H-%M-%S', time.localtime())
 
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
-    # model = ResSwin(cfg_path)
-    # model = CRNN('cnn', 'lstm_attn')
-    model = CRNN_v2('cnn', '')
-    # model = Dual_CRNN('cnn', '')
-    # model = BCRes(2)
+    model = TorNet(mode='bc', norm='in', post_mode='fc')
     model.to(device)
     print_nn(model)
     print('-' * 64)

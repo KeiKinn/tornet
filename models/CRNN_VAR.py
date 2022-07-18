@@ -271,27 +271,9 @@ class CRNN_v2(nn.Module):
         return out, features
 
 
-class Dual_CRNN(nn.Module):
-    def __init__(self, conv_net='cnn', recurrent_net='lstm_attn'):
-        super(Dual_CRNN, self).__init__()
-        self.crnn_1 = CRNN_v2(conv_net=conv_net, recurrent_net=recurrent_net)
-        self.crnn_2 = CRNN_v2(conv_net=conv_net, recurrent_net=recurrent_net)
-        self.fc = nn.Linear(128, 2)
-
-    def forward(self, x):
-        x1 = x[:, :, :40, :]
-        x2 = x[:, :, 40:, :]
-        _, features_1 = self.crnn_1(x1)
-        _, features_2 = self.crnn_2(x2)
-        features = torch.cat((features_1, features_2), dim=1)
-        out = self.fc(features)
-        return out, 0
-
-
 if __name__ == '__main__':
     x = torch.ones(1, 3, 40, 224)
     model = CRNN_v2('cnn', '')
-    # model = Dual_CRNN('cnn', '')
     out, features = model(x)
     print(model)
     print('num parameters:', sum(p.numel() for p in model.parameters() if p.requires_grad))
